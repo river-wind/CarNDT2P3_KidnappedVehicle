@@ -4,15 +4,15 @@
 <img src="T2P3_success.png" width="480" alt="Successful Run" />
 
 # Overview
-This repository is the completed final project for the Localization course in Udacity's Self-Driving Car Nanodegree.  Called the Kidnapped Vehicle project, the goal is to use a particle filter to help the robot locate itself based on a map and observations of surrounding landmarks.
+This repository is the completed final project for the Localization course in Udacity's Self-Driving Car Nanodegree.  Called the Kidnapped Vehicle project, the goal is to use a particle filter to help a virtual robot locate itself based on a provided map and observations of surrounding landmarks.
 
 #### Submission
 This submission contains a number of files, but the one of interest is /src/particle_filter.cpp, the only one with changes from the provided project framework code.
 
 ## Project Introduction
-Our robot has been kidnapped and transported to a new location! Luckily it has a map of this location it can use to figure out where that is..
+Our robot has been kidnapped and transported to a new location! Luckily it has a map of this location it can use to figure out where that is.
 
-In this project a 2 dimensional particle filter (written in C++) will help the robot locate itself. The particle filter starts with a map and that initial localization information (analogous to what a GPS would provide). At each time step the filter will also get observation and control data. 
+In this project a 2 dimensional particle filter (written in C++) will help the robot locate itself. The particle filter starts with a map and initial localization information (analogous to what a GPS would provide). At each time step the filter will also get observation and control data. 
 
 ## Running the Code
 This project relies on the Term 2 Simulator which can be downloaded [here](https://github.com/udacity/self-driving-car-sim/releases)
@@ -28,37 +28,25 @@ The main body of the program is housed in main.cpp, which relies on the followin
 
 INPUT: values provided by the simulator to the c++ program
 
-// sense noisy position data from the simulator
-
-["sense_x"] 
-
-["sense_y"] 
-
+// sense noisy position data from the simulator  
+["sense_x"]  
+["sense_y"]  
 ["sense_theta"] 
 
-// get the previous velocity and yaw rate to predict the particle's transitioned state
+// get the previous velocity and yaw rate to predict the particle's transitioned state  
+["previous_velocity"]  
+["previous_yawrate"]  
 
-["previous_velocity"]
+// receive noisy observation data from the simulator, in a respective list of x/y values  
+["sense_observations_x"]  
+["sense_observations_y"]  
 
-["previous_yawrate"]
+OUTPUT: values provided by the c++ program to the simulator  
 
-// receive noisy observation data from the simulator, in a respective list of x/y values
-
-["sense_observations_x"] 
-
-["sense_observations_y"] 
-
-
-OUTPUT: values provided by the c++ program to the simulator
-
-// best particle values used for calculating the error evaluation
-
-["best_particle_x"]
-
-["best_particle_y"]
-
-["best_particle_theta"] 
-
+// best particle values used for calculating the error evaluation  
+["best_particle_x"]  
+["best_particle_y"]  
+["best_particle_theta"]  
 
 # Implementing the Particle Filter
 The directory structure of this repository is as follows:
@@ -96,7 +84,7 @@ You can find the inputs to the particle filter in the `data` directory.
 2. y position
 3. landmark id
 
-### All other data the simulator provides, such as observations and controls.
+### All other data is provided by the simulator, such as the observation and control input data.
 
 > * Map data provided by 3D Mapping Solutions GmbH.
 
@@ -106,11 +94,11 @@ There are three main points for acheiving success for this project, as desribed 
 
 # Accuracy
 
- The particle filter should localize vehicle position and yaw to within the values specified in the parameters `max_translation_error` and `max_yaw_error` in `src/main.cpp`; when the simulator shows " Success! Your particle filter passed!" then the criteria has been met..
+ The particle filter should localize vehicle position and yaw to within the values specified in the parameters `max_translation_error` and `max_yaw_error` in `src/main.cpp`; when the simulator shows "Success! Your particle filter passed!" then the criteria has been met.
 
 # Performance
 
- The particle filter should complete execution within the time of 100 seconds.  This is checked automatically by the simulator.
+ The particle filter should complete execution within the time of 100 seconds.  This is checked automatically by the simulator; when the simulator shows "Success! Your particle filter passed!" then the criteria has been met.
 
 # General
 
@@ -118,4 +106,8 @@ There are three main points for acheiving success for this project, as desribed 
 
 # Other thoughts
 
-This project relied heavily on translating equations to code, which proved somewhat difficult.  While the code itself is not complex, understanding the meaning of the formulas discussed in the lessons was the most time consuming step.  How the data structure fit those formulas, how to address individual or groups of data points without encountering unexpected errors was the real challenge.  In one case, a seemingly easy solution to finding a minimum distance "nearest neighbor" landmark by simply keeping track of the closest landmark during the calculation step and updating it whenever the current landmark proved closer than the previously saved value, resulted in a seg fault which was not easily resolved.  Instead, replacing that login with the function calls distance(), begin(), and end() find the nearest neighbor after the fact was a faster solution to the problem.
+This project relied heavily on translating equations to code, which proved somewhat difficult.  While the code itself is not complex, understanding the meaning of the formulas discussed in the lessons was the most time consuming step.  How the data structure fits those formulas, and how to address individual or groups of data points without encountering unexpected errors proved to be the real challenge.
+
+In one case, a seemingly easy solution to finding a minimum distance "nearest neighbor" landmark (keeping track of the closest landmark during the calculation step, updating it whenever the current landmark proved closer than the previously saved value) resulted in a seg fault which was not easily resolved.  Instead, replacing that logic with the standard library and Vector function calls distance(), begin(), and end() to find the nearest neighbor after the fact was a faster solution to the problem.
+
+In another, the resampling method was relatively simple in pseudocode, but the suggestion to rely on std::discrete_distribution provided a solution so simple it was hard to avoid.  By simply building a new Vector resampled_particles from the original particles Vector, picking particles based on the discrete distribution of the existing particle weights, the final resample code was even simpler than the pseudocode which preceded it.
